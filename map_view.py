@@ -1,4 +1,5 @@
 import tkinter as tk
+from PIL import Image, ImageTk
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
@@ -52,10 +53,49 @@ def show_map(main_frame):
     for widget in main_frame.winfo_children():
         widget.destroy()
 
-    # Etiqueta de título
-    title = tk.Label(main_frame, text="Mapa de Localidades", font=("Arial", 20, "bold"))
-    title.pack(pady=10)
+    # Set colors
+    title_color = "#5F95FF"  # Blue color for main titles
+    box_bg_colors = ["#E3F2FD", "#E8F5E9", "#F3E5F5"]
+    border_color = "#D1D5DB"  # Soft gray for border
 
-    # Botón para abrir el mapa
-    map_button = tk.Button(main_frame, text="Abrir Mapa", command=open_map_window, font=("Arial", 14))
+
+    # Set fonts
+    title_font = ("Arial", 24, "bold")
+    box_font = ("Arial", 18, "bold")
+
+    # Etiqueta de título
+    title = tk.Label(main_frame, text="Mapa de Localidades en Perú", 
+                     font=title_font, fg=title_color, bg="white", justify="center")
+    title.pack(pady=15)
+    data_labels = [
+        ("Departamentos", "9"),
+        ("Nodos Activos", "+1500"),
+        ("Localidades", "1,245")    ]
+    # Crear los recuadros
+    for i, (label, value) in enumerate(data_labels):
+        frame = tk.Frame(
+            main_frame, 
+            bg=box_bg_colors[i], 
+            padx=10, 
+            pady=5, 
+            highlightbackground=border_color,  # Color del borde
+            highlightthickness=2,  # Grosor del borde
+            highlightcolor=border_color  # Color del borde cuando está enfocado
+        )
+        frame.pack(pady=10, fill='x')
+
+        lbl_label = tk.Label(frame, text=label, font=box_font, fg="black", bg=box_bg_colors[i], anchor="w")
+        lbl_label.pack(side="left", padx=10)
+        
+        lbl_value = tk.Label(frame, text=value, font=box_font, fg="black", bg=box_bg_colors[i], anchor="e")
+        lbl_value.pack(side="right", padx=10)
+
+    # Cargar la imagen del botón
+    button_image = Image.open("assets/ShowMap.png")
+    button_image = button_image.resize((150, 50))  # Ajusta el tamaño de la imagen si es necesario
+    button_photo = ImageTk.PhotoImage(button_image)
+
+    # Botón para abrir el mapa con la imagen
+    map_button = tk.Button(main_frame, image=button_photo, command=open_map_window, borderwidth=0)
+    map_button.image = button_photo  # Guardar una referencia para evitar que se recoja como basura
     map_button.pack(pady=20)

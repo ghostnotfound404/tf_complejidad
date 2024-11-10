@@ -5,10 +5,14 @@ from utils import clear_frame
 
 def show_data(main_frame):
     clear_frame(main_frame)
-
-    # Etiqueta de título
-    title = tk.Label(main_frame, text="Datos de Consumo", font=("Arial", 20, "bold"))
-    title.pack(pady=10)
+# Set colors
+    title_color = "#5F95FF"  # Blue color for main titles
+    # Set fonts
+    title_font = ("Arial", 24, "bold")
+    # Main title
+    title = tk.Label(main_frame, text="Datos de Consumo de Energía", 
+                     font=title_font, fg=title_color, bg="white", justify="center")
+    title.pack(pady=15)
 
     # Cargar los datos desde un CSV
     df = pd.read_csv('consumo_adinelsa_202305_0 (1).csv', encoding='latin1', sep=';')

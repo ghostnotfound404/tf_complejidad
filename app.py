@@ -24,11 +24,11 @@ class Menu:
         
         # Cargar imágenes para cada botón
         self.button_images = {
-            "dashboard": PhotoImage(file="button_1.png"),  # Imagen para el botón Dashboard
-            "maps": PhotoImage(file="button_1.png"),             # Imagen para el botón Mapa
-            "datos": PhotoImage(file="button_1.png"),           # Imagen para el botón Datos
-            "algorithms": PhotoImage(file="button_1.png"),# Imagen para el botón Algoritmos
-            "logout": PhotoImage(file="button_5.png"),        # Imagen para el botón Logout
+            "dashboard": PhotoImage(file="assets/ButtonDash.png"),  # Imagen para el botón Dashboard
+            "maps": PhotoImage(file="assets/ButtonMap.png"),             # Imagen para el botón Mapa
+            "datos": PhotoImage(file="assets/ButtonData.png"),           # Imagen para el botón Datos
+            "algorithms": PhotoImage(file="assets/ButtonAlgo.png"),# Imagen para el botón Algoritmos
+            "logout": PhotoImage(file="assets/ButtonLogut.png"),        # Imagen para el botón Logout
         }
 
         # Mostrar el dashboard inicialmente
