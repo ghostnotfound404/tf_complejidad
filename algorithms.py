@@ -21,7 +21,7 @@ def show_algorithms(main_frame):
     label_department = tk.Label(main_frame, text="Seleccione un departamento:")
     label_department.pack(pady=5)
     
-    department_combobox = ttk.Combobox(main_frame, values=["Amazonas", "Áncash", "Apurímac", "Arequipa"])
+    department_combobox = ttk.Combobox(main_frame, values=["Lima", "Ayacucho", "Arequipa", "Huancavelica", "Cajamarca", "Loreto"])
     department_combobox.pack(pady=5)
 
     # Selección de localidades
@@ -54,10 +54,12 @@ def show_algorithms(main_frame):
     def on_department_selected(event):
         department = department_combobox.get()
         # Aquí, deberías cargar localidades según el departamento
-        localidades = {"Amazonas": ["Localidad A", "Localidad B"],
-                       "Áncash": ["Localidad C", "Localidad D"],
-                       "Apurímac": ["Localidad E", "Localidad F"],
-                       "Arequipa": ["Localidad G", "Localidad H"]}
+        localidades = {"Lima": ["Localidad A", "Localidad B"],
+                        "Ayacucho": ["Localidad C", "Localidad D"],
+                        "Arequipa": ["Localidad C", "Localidad D"],
+                        "Huancavelica": ["Localidad E", "Localidad F"],
+                        "Cajamarca": ["Localidad E", "Localidad F"],
+                        "Loreto": ["Localidad G", "Localidad H"]}
         origin_combobox['values'] = localidades.get(department, [])
         destination_combobox['values'] = localidades.get(department, [])
 
