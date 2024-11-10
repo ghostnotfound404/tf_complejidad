@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import PhotoImage
 from dashboard import show_dashboard
 from data_view import show_data
+from map_view import show_map 
 from algorithms import show_algorithms
 from utils import clear_frame, logout
 

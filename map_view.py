@@ -1,87 +1,89 @@
-import pandas as pd
 import geopandas as gpd
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
+from tkinter import Toplevel
+from utils import clear_frame
 
-class MapView:
-    def __init__(self, parent):
-        self.parent = parent
+def show_map(main_frame):
+    clear_frame(main_frame)
+    button_prim = tk.Button(
+        main_frame,
+        text="Maps",
+        font=("Arial", 10),
+        width=10,
+        height=3,
+        command=run_maps  # Asigna la función `run_maps` al botón
+    )
+    button_prim.place(relx=0.5, rely=0.4, anchor="center")
 
-    def show_map_button(self):
-        map_button = tk.Button(
-            self.parent,
-            text="Mostrar Mapa",
-            command=self.plot_map
-        )
-        map_button.place(x=500, y=170)  # Ajusta la posición según sea necesario
+""" def run_maps():
+    # Crear una nueva ventana para el mapa
+    map_window = Toplevel()
+    map_window.title("Conexiones de Energía en Perú por Departamento")
+    map_window.geometry("800x600")
 
-    def plot_map(self):
-        # Cargar el CSV con localidades
-        df = pd.read_csv('/mnt/data/consumo_adinelsa_202305_0 (1).csv', encoding='ISO-8859-1', delimiter=';')
+    # Cargar datos geográficos de Perú
+    peru_gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    peru_gdf = peru_gdf[peru_gdf.name == "Peru"]
 
-        # Crear un grafo
-        G = nx.Graph()
+    # Crear una lista de coordenadas para los departamentos
+    departamentos = {
+        "ANCASH": (-77.45, -9.33),
+        "AREQUIPA": (-71.53, -16.40),
+        "AYACUCHO": (-74.22, -13.16),
+        "CAJAMARCA": (-78.52, -7.16),
+        "HUANCAVELICA": (-75.02, -12.78),
+        "ICA": (-75.20, -14.07),
+        "LIMA": (-76.99, -12.04),
+        "LORETO": (-74.67, -4.07),
+        "PASCO": (-75.34, -10.68)
+    }
+    
+    # Crear un grafo de networkx y añadir nodos y conexiones
+    G = nx.Graph()
+    for depto, coords in departamentos.items():
+        G.add_node(depto, pos=coords)
+    
+    # Añadir algunas conexiones manualmente entre departamentos
+    conexiones = [
+        ("LIMA", "ANCASH"), ("LIMA", "ICA"), ("LIMA", "HUANCAVELICA"),
+        ("AYACUCHO", "HUANCAVELICA"), ("AREQUIPA", "ICA"), ("LORETO", "PASCO"),
+        ("CAJAMARCA", "ANCASH"), ("PASCO", "ANCASH")
+    ]
+    G.add_edges_from(conexiones)
+    
+    # Crear la figura de matplotlib
+    fig, ax = plt.subplots(figsize=(8, 8))
+    peru_gdf.plot(ax=ax, color="white", edgecolor="blue")
 
-        # Diccionario de colores para los departamentos
-        departamentos_colores = {
-            'ANCASH': 'blue',
-            'AREQUIPA': 'purple',
-            'AYACUCHO': 'orange',
-            'CAJAMARCA': 'pink',
-            'HUANCAVELICA': 'yellow',
-            'ICA': 'green',
-            'LIMA': 'red',
-            'LORETO': 'magenta',
-            'PASCO': 'gray'
-        }
+    # Dibujar los nodos y las conexiones
+    pos = nx.get_node_attributes(G, 'pos')
+    nx.draw_networkx_edges(G, pos, ax=ax, edge_color="gray", width=1)
+    nx.draw_networkx_nodes(
+        G, pos, ax=ax, node_size=50,
+        node_color=["blue", "purple", "red", "orange", "yellow", "green", "pink", "gray", "magenta"]
+    )
+    nx.draw_networkx_labels(G, pos, ax=ax, font_size=8, font_color="black")
+    
+    # Personalizar el gráfico
+    ax.set_title("Conexiones de Energía en Perú por Departamento")
+    ax.set_xlabel("Longitud")
+    ax.set_ylabel("Latitud")
+    
+    # Crear una leyenda manual
+    colores = ["blue", "purple", "red", "orange", "yellow", "green", "pink", "gray", "magenta"]
+    etiquetas = list(departamentos.keys())
+    for color, label in zip(colores, etiquetas):
+        ax.scatter([], [], c=color, label=label)
+    ax.legend(title="Departamentos", loc="upper right")
+    
+    # Incrustar la figura en la ventana de Tkinter
+    canvas = FigureCanvasTkAgg(fig, master=map_window)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
-        # Añadir nodos al grafo
-        for _, row in df.iterrows():
-            G.add_node(row['LOCALIDAD'], 
-                       departamento=row['DEPARTAMENTO'], 
-                       consumo=row['CONSUMO_KW'], 
-                       pos=(row['Longitud'], row['Latitud']))  # Asegúrate de que existan las columnas 'Longitud' y 'Latitud'
-
-        # Conectar localidades basándose en el CSV
-        for _, row in df.iterrows():
-            connected_localities = row.get('ConectadoA')  # Obtener localidades conectadas
-            if isinstance(connected_localities, str):  # Verificar si es una cadena
-                connected_localities = connected_localities.split(';')  # Dividir si es una cadena
-                for locality in connected_localities:
-                    G.add_edge(row['LOCALIDAD'], locality.strip())  # Añadir la conexión al grafo
-
-        # Cargar el mapa de Perú desde geopandas
-        peru = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-        peru = peru[peru.name == "Peru"]
-
-        # Crear un GeoDataFrame para los nodos
-        nodes_df = pd.DataFrame(G.nodes(data=True), columns=['Localidad', 'Data'])
-        nodes_df['departamento'] = nodes_df['Data'].apply(lambda x: x['departamento'])
-        nodes_gdf = gpd.GeoDataFrame(nodes_df, geometry=gpd.points_from_xy(nodes_df['Data'].apply(lambda x: x['pos'][0]),
-                                                                            nodes_df['Data'].apply(lambda x: x['pos'][1])))
-
-        # Dibujar el mapa
-        fig, ax = plt.subplots(figsize=(12, 12))
-        peru.boundary.plot(ax=ax, linewidth=1)  # Dibujar fronteras de Perú
-
-        # Dibujar localidades con colores por departamento
-        for dep, color in departamentos_colores.items():
-            local_nodes = nodes_df[nodes_df['departamento'] == dep]  # Filtrar localidades por departamento
-            ax.scatter(local_nodes['Data'].apply(lambda x: x['pos'][0]),  # Longitudes
-                       local_nodes['Data'].apply(lambda x: x['pos'][1]),  # Latitudes
-                       color=color, label=dep, s=50)  # Ajusta el tamaño de los puntos (s)
-
-        # Dibujar el grafo
-        pos = nx.get_node_attributes(G, 'pos')
-        nx.draw_networkx_edges(G, pos, ax=ax, alpha=0.5, edge_color='black')
-
-        # Ajustar la leyenda para que esté fuera del mapa
-        plt.legend(title='Departamentos', bbox_to_anchor=(1.05, 1), loc='upper left')
-
-        plt.title('Conexiones de Energía en Perú por Departamento')
-        plt.xlabel('Longitud')
-        plt.ylabel('Latitud')
-        plt.grid()
-        plt.tight_layout()  # Ajustar el diseño para que no haya superposición
-        plt.show()
+    # Importante: cerrar la figura después de incrustarla en Tkinter para evitar problemas de memoria
+    plt.close(fig)
+ """
