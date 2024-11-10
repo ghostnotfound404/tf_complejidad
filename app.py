@@ -59,10 +59,9 @@ class Menu:
             )
             button.pack(pady=20)
 
-    def handle_btn_press(self, btn_key):
-        # Limpiar el contenido principal antes de mostrar una nueva vista
-        clear_frame(self.main_frame)
 
+    def handle_btn_press(self, btn_key):
+        clear_frame(self.main_frame)
         if btn_key == "maps":
             show_map(self.main_frame)
         elif btn_key == "datos":
@@ -73,6 +72,7 @@ class Menu:
             show_dashboard(self.main_frame)
         elif btn_key == "logout":
             self.parent.destroy()
+
 
         print(f"Botón '{btn_key}' presionado.")
 
