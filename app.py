@@ -5,6 +5,7 @@ from data_view import show_data
 from map_view import show_map 
 from algorithms import show_algorithms
 from utils import clear_frame, logout
+from login import login_window
 
 class Menu:
     def __init__(self, parent):
@@ -84,6 +85,7 @@ root.geometry("1200x600")  # Ajustar el tamaño de la ventana para que sea más 
 # Crear el menú lateral con los botones y la funcionalidad
 app_menu = Menu(root)
 app_menu.create_menu()
-
+# Show the login window
+login_window(root)
 # Ejecutar la aplicación
 root.mainloop()
